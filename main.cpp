@@ -24,7 +24,7 @@ int convertString(char sequenceDNA){
 }
 
 
-
+//This function just selects the largest
 double macarena(double one_macarena, double two_macarena, double three_macarena){
     double ayyyyy = 0;
     if(one_macarena >= two_macarena && one_macarena >= three_macarena){
@@ -86,9 +86,9 @@ int main(int argc, char *argv[]) {
     int iy = 0;
 
     while(ix < xmatrix){
-        double temp1 = 0;
-        double temp2 = 0;
-        double temp3 = 0;
+        double temp1 = -100;
+        double temp2 = -100;
+        double temp3 = -100;
         for(int i = 0; i < 3; i++){
             matrix[ix][iy].arrows[i] = -100;
         }
@@ -168,6 +168,8 @@ int main(int argc, char *argv[]) {
     ix = xmatrix - 1;
     iy = ymatrix - 1;
     vector<double> alignment;
+    vector<char> topx;
+    vector<char> bottomy;
     while(ix !=0 && iy != 0){
         double max = -100;
         int count = 0;
@@ -179,12 +181,18 @@ int main(int argc, char *argv[]) {
         }
         alignment.push_back(max);
         if(count == 0){
+            topx.push_back('_');
+            bottomy.push_back(ystr[iy-1]);
             iy--;
         }
         else if(count ==2){
+            topx.push_back(xstr[ix-1]);
+            bottomy.push_back('_');
             ix--;
         }
         else{
+            topx.push_back(xstr[ix-1]);
+            bottomy.push_back(ystr[iy-1]);
             iy--;
             ix--;
         }
@@ -199,5 +207,15 @@ int main(int argc, char *argv[]) {
         }
         cout << alignment.at(i) << ", " ;
     }
+    cout << "The sequence:" << endl;
+    for (int i = bottomy.size()-1; i >= 0; i--){
+        cout << bottomy.at(i) << " " ;
+    }
+    cout << endl;
+    for (int i = topx.size()-1; i >= 0; i--){
+        cout << topx.at(i) << " " ;
+    }
+    cout << endl;
+    
     return 0;
 }
