@@ -52,12 +52,12 @@ int main(int argc, char *argv[]) {
     //define x and y as string
     int xsize = 0;
     int ysize = 0;
-    cout << "Enter string x:";
+    cout << "Enter string:";
     //AGCATAATACCCCTATACTGT
     string xstr = "";
     cin >> xstr;
     xsize = xstr.size();
-    cout << "Enter string y:";
+    cout << "Enter string:";
     //GTGCAATCGCTGGCGGCGTAG
     string ystr = "";
     cin >> ystr;
@@ -205,7 +205,9 @@ int main(int argc, char *argv[]) {
         if(i == alignment.size() -1){
             cout << alignment.at(i) << endl;
         }
-        cout << alignment.at(i) << ", " ;
+        else{
+            cout << alignment.at(i) << ", " ;
+        }
     }
     cout << "The sequence:" << endl;
     for (int i = bottomy.size()-1; i >= 0; i--){
