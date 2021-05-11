@@ -39,29 +39,16 @@ double macarena(double one_macarena, double two_macarena, double three_macarena)
     return ayyyyy;
 }
 
-// void determineArrow(int* matrix[ix][iy].arrows, double diagonal, double top, double left){
-//     int value = 0;
-//     if (left >= diagonal && left>= top){
-//         arr1[0]= 1;
-//     }
-//     if(diagonal >= left && diagonal>= top){
-//         arr1[1]= 1;
-//     }
-//     if (top >= left && top>= diagonal){
-//         arr1[2]= 1;
-//     }
-// }
+
+
 
 struct Score{
     double value;
-    int arrows[3];
+    //left, diaganol, top
+    double arrows[3];
 };
 
 int main(int argc, char *argv[]) {
-    //variables
-    double temp1 = -1.0;
-    double temp2 = -1.0;
-    double temp3 = -1.0;
     //define x and y as string
     int xsize = 0;
     int ysize = 0;
@@ -97,45 +84,33 @@ int main(int argc, char *argv[]) {
     }
     int ix = 0;
     int iy = 0;
-    // cout << iy << endl;
-    //----------------------------------------------------------------------------------------------------
+
     while(ix < xmatrix){
+        double temp1 = 0;
+        double temp2 = 0;
+        double temp3 = 0;
         for(int i = 0; i < 3; i++){
-            matrix[ix][iy].arrows[i] = 0;
+            matrix[ix][iy].arrows[i] = -100;
         }
-        bool left = false;
-        bool diagonal = false;
-        bool top = false;
+        
         //base case
         if(ix == 0){
             if(iy == 0){
                 matrix[ix][iy].value = 0;
-                iy= iy+1;
                 //arrows does not change
             }
             else if (ix == 0 && iy < ymatrix){
                 double temp = (double)(matrix[ix][iy-1].value);
                 matrix[ix][iy].value = temp - 0.2;
                 //left arrow only
-                matrix[ix][iy].arrows[0] = 1;
-                iy++;
-            }
-            if(iy == ymatrix){
-                ix++;
-                iy = 0;
+                matrix[ix][iy].arrows[0] = temp - 0.2;
             }
         }
-        // else{
-        //     ix = xmatrix;
-        // }
         else{
             if(iy == 0){
                 double temp = (double)(matrix[ix-1][iy].value);
                 matrix[ix][iy].value = temp - 0.2;
-                //top arrow only
                 temp2 = temp - 0.2;
-                matrix[ix][iy].arrows[2] = 1;
-                iy++;
             }
             else{
                 //check if letters match - yes
@@ -160,30 +135,25 @@ int main(int argc, char *argv[]) {
                     //left
                     temp3 = matrix[ix][iy-1].value - 0.2;
                     if (abs(temp3) < 0.001) temp3 = 0;
+                    //macarena function gets the largest
+
                     matrix[ix][iy].value = macarena(temp1, temp2, temp3);
                 }
-                int count[3] = {temp1, temp2, temp3};
-                int max = 0;
-                for(int i = 0; i <3; i++){
-                    if(count[i] >= max){
-                        max = count[i];
-                    }
-                }
-                if(max == temp1){
-                    matrix[ix][iy].arrows[1]= 1;
-                }
-                else if (max == temp2){
-                    matrix[ix][iy].arrows[2]= 1;
-                }
-                else{
-                    matrix[ix][iy].arrows[0]= 1;
-                }
-                iy++;
+            } 
+            if(temp1 != -100){
+                matrix[ix][iy].arrows[1] = temp1;
             }
-            if(iy == ymatrix){
+            if(temp2 != -100){
+                matrix[ix][iy].arrows[2] = temp2;
+            }
+            if(temp3 != -100){
+                matrix[ix][iy].arrows[0] = temp3;
+            }
+        }
+        iy++;
+        if(iy == ymatrix){
                 ix++;
                 iy = 0;
-            }
         }
     }
     //test matrix
@@ -197,33 +167,37 @@ int main(int argc, char *argv[]) {
     //backtrack
     ix = xmatrix - 1;
     iy = ymatrix - 1;
-    double total = 0;
     vector<double> alignment;
-    while(ix != 0 && iy != 0){
-        total += matrix[ix][iy].value;
-        alignment.push_back(matrix[ix][iy].value);
-        if(matrix[ix][iy].arrows[1]==1){
-            ix--;
+    while(ix !=0 && iy != 0){
+        double max = -100;
+        int count = 0;
+        for (int k = 0; k < 3; k++){
+            if (matrix[ix][iy].arrows[k] > max){
+                max = matrix[ix][iy].arrows[k];
+                count = k;
+            }
+        }
+        alignment.push_back(max);
+        if(count == 0){
             iy--;
         }
-        else if(matrix[ix][iy].arrows[0]==1){
+        else if(count ==2){
             ix--;
         }
         else{
             iy--;
+            ix--;
         }
     }
-
+    alignment.push_back(matrix[0][0].value);
     double sim_score = matrix[xmatrix-1][ymatrix-1].value;
     cout << "The simailarity score is: " << sim_score << endl;
+    cout << " One alignment: ";
     for (int i = 0; i < alignment.size(); i++){
-        if(i == alignment.size()-1){
+        if(i == alignment.size() -1){
             cout << alignment.at(i) << endl;
         }
-        else{
-            cout << alignment.at(i) << " + ";
-        }
+        cout << alignment.at(i) << ", " ;
     }
-    cout << "After adding alignment we get: " << total << endl;
     return 0;
 }
